@@ -15,6 +15,18 @@ stop_process() {
     echo "manage_my_process stopped"
 }
 
+silent_start() {
+    ./manage_my_process &
+    echo $! > /var/run/my_process.pid
+}
+
+silent_stop() {
+    if [ -f /var/run/my_process.pid ]; then
+        kill "$(cat /var/run/my_process.pid)"
+        rm -f /var/run/my_process.pid
+    fi
+}
+
 case "$1" in
     start)
         start_process
@@ -23,8 +35,8 @@ case "$1" in
         stop_process
         ;;
     restart)
-        stop_process
-        start_process
+        silent_stop
+        silent_start
         echo "manage_my_process restarted"
         ;;
     *)
