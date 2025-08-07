@@ -1,0 +1,213 @@
+#!/bin/bash
+# Navigate to the correct directory
+cd /alche-shell/loops_conditions_and_parsing
+
+# 1-for_best_school: Display Best School 10 times using for loop
+cat > 1-for_best_school << 'EOF'
+#!/usr/bin/env bash
+# This script is displaying "Best School" 10 times
+for i in {1..10}
+do
+    echo "Best School"
+done
+EOF
+
+# 2-while_best_school: Display Best School 10 times using while loop
+cat > 2-while_best_school << 'EOF'
+#!/usr/bin/env bash
+# This script is displaying "Best School" 10 times
+i=1
+while [ $i -le 10 ]
+do
+    echo "Best School"
+    ((i++))
+done
+EOF
+
+# 3-until_best_school: Display Best School 10 times using until loop
+cat > 3-until_best_school << 'EOF'
+#!/usr/bin/env bash
+# This script is displaying "Best School" 10 times
+i=1
+until [ $i -gt 10 ]
+do
+    echo "Best School"
+    ((i++))
+done
+EOF
+
+# 4-if_9_say_hi: Display Best School 10 times, but say Hi on 9th iteration
+cat > 4-if_9_say_hi << 'EOF'
+#!/usr/bin/env bash
+# This script displays "Best School" 10 times, but for the 9th iteration, displays "Best School" and then "Hi"
+i=1
+while [ $i -le 10 ]
+do
+    echo "Best School"
+    if [ $i -eq 9 ]
+    then
+        echo "Hi"
+    fi
+    ((i++))
+done
+EOF
+
+# 5-4_bad_luck_8_is_your_chance: Loop 1-10 with special messages
+cat > 5-4_bad_luck_8_is_your_chance << 'EOF'
+#!/usr/bin/env bash
+# This script loops from 1 to 10 and displays bad luck, good luck, or Best School
+i=1
+while [ $i -le 10 ]
+do
+    if [ $i -eq 4 ]
+    then
+        echo "bad luck"
+    elif [ $i -eq 8 ]
+    then
+        echo "good luck"
+    else
+        echo "Best School"
+    fi
+    ((i++))
+done
+EOF
+
+# 6-superstitious_numbers: Display 1-20 with special messages using case
+cat > 6-superstitious_numbers << 'EOF'
+#!/usr/bin/env bash
+# This script displays numbers from 1 to 20 with superstitious messages
+i=1
+while [ $i -le 20 ]
+do
+    echo "$i"
+    case $i in
+        4)
+            echo "bad luck from China"
+            ;;
+        9)
+            echo "bad luck from Japan"
+            ;;
+        17)
+            echo "bad luck from Italy"
+            ;;
+    esac
+    ((i++))
+done
+EOF
+
+# 7-clock: Display time for 12 hours and 59 minutes
+cat > 7-clock << 'EOF'
+#!/usr/bin/env bash
+# This script displays the time for 12 hours and 59 minutes
+hour=0
+while [ $hour -le 12 ]
+do
+    echo "Hour: $hour"
+    minute=1
+    while [ $minute -le 59 ]
+    do
+        echo "$minute"
+        ((minute++))
+    done
+    ((hour++))
+done
+EOF
+
+# 8-for_ls: Display directory contents showing only part after first dash
+cat > 8-for_ls << 'EOF'
+#!/usr/bin/env bash
+# This script displays the content of the current directory in a list format, showing only the part after the first dash
+for file in *
+do
+    if [[ "$file" == *-* ]]
+    then
+        echo "${file#*-}"
+    else
+        echo "$file"
+    fi
+done
+EOF
+
+# 9-to_file_or_not_to_file: Give information about the school file
+cat > 9-to_file_or_not_to_file << 'EOF'
+#!/usr/bin/env bash
+# This script gives information about the school file
+if [ -e "school" ]
+then
+    echo "school file exists"
+    if [ -s "school" ]
+    then
+        echo "school file is not empty"
+    else
+        echo "school file is empty"
+    fi
+    if [ -f "school" ]
+    then
+        echo "school is a regular file"
+    fi
+else
+    echo "school file does not exist"
+fi
+EOF
+
+# 10-fizzbuzz: FizzBuzz from 1 to 100
+cat > 10-fizzbuzz << 'EOF'
+#!/usr/bin/env bash
+# This script displays numbers from 1 to 100 with FizzBuzz rules
+for i in {1..100}
+do
+    if (( i % 15 == 0 ))
+    then
+        echo "FizzBuzz"
+    elif (( i % 3 == 0 ))
+    then
+        echo "Fizz"
+    elif (( i % 5 == 0 ))
+    then
+        echo "Buzz"
+    else
+        echo "$i"
+    fi
+done
+EOF
+
+# 11-read_and_cut: Display username, user id, home directory from /etc/passwd
+cat > 11-read_and_cut << 'EOF'
+#!/usr/bin/env bash
+# This script displays the content of /etc/passwd showing username, user id, and home directory
+while IFS=: read -r username password uid gid info home shell
+do
+    echo "$username:$uid:$home"
+done < /etc/passwd
+EOF
+
+# 12-tell_the_story_of_passwd: Creative display of /etc/passwd
+cat > 12-tell_the_story_of_passwd << 'EOF'
+#!/usr/bin/env bash
+# This script tells a story based on the content of /etc/passwd
+while IFS=: read -r username password uid gid info home shell
+do
+    echo "The user $username is part of the $gid gang, lives in $home and rides $shell. $uid's place is protected by the passcode $password, more info about the user here: $info"
+done < /etc/passwd
+EOF
+
+# 13-lets_parse_apache_logs: Parse Apache logs for IP and HTTP status code
+cat > 13-lets_parse_apache_logs << 'EOF'
+#!/usr/bin/env bash
+# This script displays the visitor IP along with the HTTP status code from Apache log file
+awk '{print $1 " " $9}' apache-access.log
+EOF
+
+# 14-dig_the-data: Group and count Apache log entries
+cat > 14-dig_the-data << 'EOF'
+#!/usr/bin/env bash
+# This script groups visitors by IP and HTTP status code, and displays this data
+awk '{print $1 " " $9}' apache-access.log | sort | uniq -c | sort -rn
+EOF
+
+# Make all scripts executable
+chmod u+x 1-for_best_school 2-while_best_school 3-until_best_school 4-if_9_say_hi 5-4_bad_luck_8_is_your_chance 6-superstitious_numbers 7-clock 8-for_ls 9-to_file_or_not_to_file 10-fizzbuzz 11-read_and_cut 12-tell_the_story_of_passwd 13-lets_parse_apache_logs 14-dig_the-data
+
+echo "All loops_conditions_and_parsing scripts created successfully!"
+echo "Total scripts created: 14"
+ls -1 | grep -E '^[0-9]' | wc -l
