@@ -1,0 +1,175 @@
+#!/bin/bash
+# Navigate to the correct directory
+cd /alche-shell/processes_and_signals
+
+# 0-what-is-my-pid: Display script's own PID
+cat > 0-what-is-my-pid << 'EOF'
+#!/usr/bin/env bash
+# This script displays its own PID
+echo $$
+EOF
+
+# 1-list_your_processes: List all running processes
+cat > 1-list_your_processes << 'EOF'
+#!/usr/bin/env bash
+# This script displays a list of currently running processes
+ps -auxf
+EOF
+
+# 2-show_your_bash_pid: Show lines containing bash
+cat > 2-show_your_bash_pid << 'EOF'
+#!/usr/bin/env bash
+# This script displays lines containing the bash word
+# shellcheck disable=SC2009
+ps -auxf | grep bash
+EOF
+
+# 3-show_your_bash_pid_made_easy: Show bash PIDs using pgrep
+cat > 3-show_your_bash_pid_made_easy << 'EOF'
+#!/usr/bin/env bash
+# This script displays the PID and process name of processes containing bash
+pgrep -l bash
+EOF
+
+# 4-to_infinity_and_beyond: Display message indefinitely
+cat > 4-to_infinity_and_beyond << 'EOF'
+#!/usr/bin/env bash
+# This script displays "To infinity and beyond" indefinitely with sleep 2
+while true
+do
+    echo "To infinity and beyond"
+    sleep 2
+done
+EOF
+
+# 5-dont_stop_me_now: Kill 4-to_infinity_and_beyond process
+cat > 5-dont_stop_me_now << 'EOF'
+#!/usr/bin/env bash
+# This script stops 4-to_infinity_and_beyond process
+kill "$(pgrep -f 4-to_infinity_and_beyond)"
+EOF
+
+# 6-stop_me_if_you_can: Stop process without kill/killall
+cat > 6-stop_me_if_you_can << 'EOF'
+#!/usr/bin/env bash
+# This script stops 4-to_infinity_and_beyond process without using kill or killall
+pkill -f 4-to_infinity_and_beyond
+EOF
+
+# 67-stop_me_if_you_can: Stop highlander process
+cat > 67-stop_me_if_you_can << 'EOF'
+#!/usr/bin/env bash
+# This script stops 7-highlander process without using kill or killall
+pkill -f 7-highlander
+EOF
+
+# 7-highlander: Infinite loop with SIGTERM trap
+cat > 7-highlander << 'EOF'
+#!/usr/bin/env bash
+# This script displays "To infinity and beyond" indefinitely and handles SIGTERM
+trap 'echo "I am invincible!!!"' SIGTERM
+while true
+do
+    echo "To infinity and beyond"
+    sleep 2
+done
+EOF
+
+# 8-beheaded_process: Kill 7-highlander process
+cat > 8-beheaded_process << 'EOF'
+#!/usr/bin/env bash
+# This script kills the process 7-highlander
+pkill -9 -f 7-highlander
+EOF
+
+# 10-process_and_pid_file: Complex process with PID file and signal handling
+cat > 10-process_and_pid_file << 'EOF'
+#!/usr/bin/env bash
+# This script creates PID file, displays messages, and handles signals
+
+# Create PID file
+echo $$ > /var/run/myscript.pid
+
+# Define signal handlers
+sigterm_handler() {
+    echo "I hate the kill command"
+    rm -f /var/run/myscript.pid
+    exit
+}
+
+sigint_handler() {
+    echo "Y U no love me?!"
+}
+
+sigquit_handler() {
+    rm -f /var/run/myscript.pid
+    exit
+}
+
+# Set up signal traps
+trap sigterm_handler SIGTERM
+trap sigint_handler SIGINT
+trap sigquit_handler SIGQUIT
+
+# Main loop
+while true
+do
+    echo "To infinity and beyond"
+    sleep 2
+done
+EOF
+
+# manage_my_process: Daemon that writes to file
+cat > manage_my_process << 'EOF'
+#!/usr/bin/env bash
+# This script indefinitely writes "I am alive!" to /tmp/my_process
+while true
+do
+    echo "I am alive!" >> /tmp/my_process
+    sleep 2
+done
+EOF
+
+# 11-manage_my_process: Init script to manage the daemon
+cat > 11-manage_my_process << 'EOF'
+#!/usr/bin/env bash
+# This script manages manage_my_process daemon
+
+start_process() {
+    ./manage_my_process &
+    echo $! > /var/run/my_process.pid
+    echo "manage_my_process started"
+}
+
+stop_process() {
+    if [ -f /var/run/my_process.pid ]; then
+        kill "$(cat /var/run/my_process.pid)"
+        rm -f /var/run/my_process.pid
+    fi
+    echo "manage_my_process stopped"
+}
+
+case "$1" in
+    start)
+        start_process
+        ;;
+    stop)
+        stop_process
+        ;;
+    restart)
+        stop_process
+        start_process
+        echo "manage_my_process restarted"
+        ;;
+    *)
+        echo "Usage: manage_my_process {start|stop|restart}"
+        ;;
+esac
+EOF
+
+# Make all scripts executable
+chmod u+x 0-what-is-my-pid 1-list_your_processes 2-show_your_bash_pid 3-show_your_bash_pid_made_easy 4-to_infinity_and_beyond 5-dont_stop_me_now 6-stop_me_if_you_can 67-stop_me_if_you_can 7-highlander 8-beheaded_process 10-process_and_pid_file manage_my_process 11-manage_my_process
+
+echo "All processes_and_signals scripts created successfully!"
+echo "Total scripts created: 13"
+ls -1 | grep -E '^[0-9]|^manage_my_process$' | wc -l
